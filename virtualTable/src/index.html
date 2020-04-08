@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Title</title>
+    <style>
+      :root {
+        font-size: 24px;
+      }
+      body {
+        font-size: 0.24rem;
+      }
+
+      ul {
+        margin: 0 0 20px;
+        overflow: hidden;
+      }
+
+      li {
+        list-style: none;
+        float: left;
+        width: 33.33%;
+      }
+
+      h3 {
+        text-align: center;
+        margin: 0 0 10px;
+      }
+    </style>
+    <script>
+      function changeView() {
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+
+        if (width < 320) {
+          let screen = window.screen;
+          width = screen[screen.width > screen.height ? 'height' : 'width'];
+          if (width < 320) width = 320;
+        }
+
+        if (width > 750) width = 750;
+
+        document.getElementsByTagName('html')[0].style.setProperty('font-size', (100 * width) / 750 + 'px');
+        document.getElementsByTagName('body')[0].style.setProperty('visibility', 'visible');
+
+        if (!width) {
+          setTimeout(changeView, 20);
+        }
+      }
+
+      window.onload = function() {
+        changeView();
+      };
+    </script>
+  </head>
+  <body>
+    <h3>页面</h3>
+
+    <ul>
+      <li><a href="./banksComparison.html?user=1&token=000000&child_type=bankFinancialComparison&bankTypeCode=001002,001003,001005,001006&marketType=100,101,110,111,010,011,110,111,001,011,101,111&areaCode=1100,3100,4400,3200,3300,3400,5000,3500,6200,4500,5200,4600,1300,4100,2300,4200,4300,2200,3600,2100,1500,6400,6300,3700,1400,6100,5100,1200,5400,6500,5300&accountingCode=220006&reportType=20121231,20131231,20141231,20151231,20161231&pagesize=20">银行财务对比</a></li>
+      <li><a href="./banksComparison.html?user=1&token=000000&child_type=bankSpecialComparison&bankTypeCode=001002,001003,001005,001006&marketType=100,101,110,111,010,011,110,111,001,011,101,111&areaCode=1100,3100,4400,3200,3300,3400,5000,3500,6200,4500,5200,4600,1300,4100,2300,4200,4300,2200,3600,2100,1500,6400,6300,3700,1400,6100,5100,1200,5400,6500,5300&accountingCode=220006&reportType=20121231,20131231,20141231,20151231,20161231&pagesize=20">银行专项对比</a></li>
+    </ul>
+
+    <ul>
+      <li><a href="./financialNotes.html?user=1&token=000000">贷款五级分类</a></li>
+      <li><a href="./notesTrendChart.html?user=1&token=000000">贷款结构对比</a></li>
+      <li><a href="./notesTrendChart.html?user=1&token=000000">逾期贷款对比</a></li>
+      <li><a href="./notesTrendChart.html?user=1&token=000000">经营情况对比</a></li>
+    </ul>
+  </body>
+</html>

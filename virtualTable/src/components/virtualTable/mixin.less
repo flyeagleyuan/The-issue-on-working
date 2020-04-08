@@ -1,0 +1,150 @@
+.border-1px(@color:#ccc, @radius: 2px, @style: solid) {
+  position: relative;
+  &::after {
+    content: '';
+    pointer-events: none;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    border: 1px @style @color;
+    border-radius: @radius;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    @media (min-resolution: 2dppx) {
+      width: 200%;
+      height: 200%;
+      border-radius: @radius * 2;
+      transform: scale(0.5);
+    }
+    @media (min-resolution: 3dppx) {
+      width: 300%;
+      height: 300%;
+      border-radius: @radius * 3;
+      transform: scale(0.333);
+    }
+  }
+}
+
+.border-top-1px(@color: #ccc, @style: solid) {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    transform-origin: 0 0;
+  }
+  &::before {
+    border-top: 1px @style @color;
+    top: 0;
+    right: 0;
+    height: 100%;
+    transform-origin: right 0;
+  }
+
+  @media (min-resolution: 2dppx) {
+    &::before {
+      width: 200%;
+      transform: scale(0.5);
+    }
+  }
+  @media (min-resolution: 3dppx) {
+    &::before {
+      width: 300%;
+      transform: scale(0.333);
+    }
+  }
+}
+
+.border-bottom-1px(@color: #ccc, @style: solid) {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    transform-origin: 0 0;
+  }
+  &::after {
+    border-bottom: 1px @style @color;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    transform-origin: 0 bottom;
+  }
+  @media (min-resolution: 2dppx) {
+    &::after {
+      width: 200%;
+      transform: scale(0.5);
+    }
+  }
+  @media (min-resolution: 3dppx) {
+    &::after {
+      width: 300%;
+      transform: scale(0.333);
+    }
+  }
+}
+
+.border-right-1px(@color: #ccc, @style: solid) {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    transform-origin: 0 0;
+  }
+  &::after {
+    border-right: 1px @style @color;
+    top: 0;
+    right: 0;
+    height: 100%;
+    transform-origin: right 0;
+  }
+  @media (min-resolution: 2dppx) {
+    &::after {
+      height: 200%;
+      transform: scale(0.5);
+    }
+  }
+  @media (min-resolution: 3dppx) {
+    &::after {
+      height: 300%;
+      transform: scale(0.333);
+    }
+  }
+}
+
+.border-left-1px(@color: #ccc, @style: solid) {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    transform-origin: 0 0;
+  }
+  &::before {
+    border-left: 1px @style @color;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform-origin: left 0;
+  }
+  @media (min-resolution: 2dppx) {
+    &::before {
+      height: 200%;
+      transform: scale(0.5);
+    }
+  }
+  @media (min-resolution: 3dppx) {
+    &::before {
+      height: 300%;
+      transform: scale(0.333);
+    }
+  }
+}

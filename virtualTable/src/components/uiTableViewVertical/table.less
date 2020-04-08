@@ -1,0 +1,123 @@
+.relative {
+  position: relative;
+}
+
+.fixed-table {
+  padding-left: 0.18rem;
+
+  .title {
+    font-weight: 600;
+  }
+
+  .no-scroll-bar {
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+  }
+
+  .custom-table-layout {
+    font-size: 0.26rem;
+  }
+
+  .main-table-layout {
+    .table-row {
+      .table-head,
+      .table-cell {
+        padding-left: 0;
+      }
+    }
+  }
+
+  .table-row {
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 0.64rem;
+
+    .table-cell,
+    .table-head {
+      display: inline-block;
+      text-align: center;
+      box-sizing: border-box;
+      vertical-align: middle;
+      padding-left: 0.2rem;
+      padding-right: 0.25rem;
+      -webkit-tap-highlight-color: transparent;
+
+      & > span {
+        display: inline-block;
+        box-sizing: border-box;
+        max-width: 100%;
+        text-align: inherit;
+      }
+    }
+
+    .table-head {
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:not(:first-child) {
+        padding-left: 0;
+      }
+
+      > span {
+        position: relative;
+      }
+
+      &.asc > span:after,
+      &.desc > span:after {
+        position: absolute;
+        content: '';
+        border: 0.1rem solid;
+        border-color: #1482f0 transparent transparent;
+        right: -0.25rem;
+        top: 50%;
+      }
+
+      &.asc > span {
+        &:after {
+          margin-top: -0.16rem;
+          transform: rotate(180deg);
+        }
+      }
+
+      &.desc > span {
+        &:after {
+          margin-top: -0.05rem;
+        }
+      }
+    }
+
+    .table-cell {
+      line-height: 0.32rem;
+      white-space: nowrap;
+
+      &:not(:first-child) {
+        padding-left: 0;
+      }
+    }
+
+    .table-cell.index,
+    .table-head.index {
+      text-overflow: initial;
+      overflow: initial;
+    }
+  }
+
+  .active-row {
+    color: #ff7a15;
+    border-bottom: 1px solid #dfdfdf;
+  }
+
+  .table-active + .table-main {
+    margin-top: 0.15rem;
+  }
+
+  .text-ellipse {
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

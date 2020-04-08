@@ -1,0 +1,51 @@
+{
+  "name": "el-vue",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "analyz": "vue-cli-service build --mode analyz",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "core-js": "^2.6.5",
+    "css-loader": "^3.4.2",
+    "dayjs": "^1.8.14",
+    "echarts": "^4.5.0",
+    "fastclick": "^1.0.6",
+    "inobounce": "^0.2.0",
+    "lodash": "^4.17.11",
+    "mint-ui": "^2.2.13",
+    "normalize.css": "^8.0.1",
+    "prettier": "^1.19.1",
+    "vconsole": "^3.3.4",
+    "vue": "^2.6.10",
+    "webpack-zepto": "^0.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.9.2",
+    "@vue/cli-plugin-eslint": "^3.9.2",
+    "@vue/cli-service": "^3.9.3",
+    "@vue/eslint-config-prettier": "^5.0.0",
+    "babel-eslint": "^10.0.2",
+    "babel-plugin-component": "^1.1.1",
+    "babel-plugin-lodash": "^3.3.4",
+    "eslint": "^6.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "glob": "^7.1.4",
+    "gulp": "^4.0.2",
+    "gulp-ssh": "^0.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.0.4",
+    "less-loader": "^4.1.0",
+    "lodash-webpack-plugin": "^0.11.5",
+    "minimist": "^1.2.0",
+    "purgecss-webpack-plugin": "^1.5.0",
+    "shelljs": "^0.8.3",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.33.0",
+    "webpack-bundle-analyzer": "^3.3.2"
+  }
+}
