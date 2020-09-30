@@ -4,5 +4,6 @@ module.exports = {
   themeConfig: {
     displayAllHeaders: true,
     sidebar: ["/"],
+    lastUpdated: "Last Updated",
   },
 };
