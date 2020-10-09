@@ -3,7 +3,7 @@ module.exports = {
   description: "Just playing around",
   themeConfig: {
     displayAllHeaders: true,
-    sidebar: ["/"],
+    sidebar: ["/", ["/changeObserve/","为什么写这篇文章"]],
     lastUpdated: "Last Updated",
   },
 };

@@ -1,15 +1,32 @@
+### 默认主题配置
+---
+home: true
+heroText: Hero 标题
+tagline: Hero 副标题
+actionText: 快速上手 →
+actionLink: /zh/guide/
+features:
+  - title: 简洁至上
+    details: 以 Markdown 为中心的项目结构，以最少的配置帮助你专注于写作。
+  - title: Vue驱动
+    details: 享受 Vue + webpack 的开发体验，在 Markdown 中使用 Vue 组件，同时可以使用 Vue 来开发自定义主题。
+  - title: 高性能
+    details: VuePress 为每个页面预渲染生成静态的 HTML，同时在页面被加载的时候，将作为 SPA 运行。
+footer: MIT Licensed | Copyright © 2020 flyeagleyuan
+---
+
 ### GIT 提交规范
 
-信息提交格式为
+**信息提交格式为**
 
-> \<commit-type\>[(\<scope\>)]: \<commit-msg\> (#禅道号)
+> \<commit-type\>[(\<scope\>)]: \<commit-msg\>
 
 - `commit-type`：必填项，为对应提交类型，这里约定了`feat`,`fix`,`docs`,`style`,`refactor`,`perf`,`test`,`build`,`ci`,`chore`,`types`,`wip`,`revert`这些类别，具体代表的含义可以查看下面的*提交类别*说明。
 - `scope`：可选必填项，用于描述改动的范围，如果一次 commit 修改多个模块，建议拆分成多次 commit，以便更好追踪和维护。
 - `commit-msg`: 必填项，为提交信息的简要说明。
 - 禅道号: 必填项，每一次提交必须对应一个禅道号，如果某次修改没有禅道号对应，请使用`#000`。需要注意的是，禅道号必须使用`#`开头，并且一个提交只能写一个禅道号，在有多个禅道 bug 的情况下，请将不同的 bug 进行拆分提交。
 
-提交示例
+**提交示例**
 
 ```bash
 # 在F9模块添加一个新功能
@@ -42,21 +59,4 @@ git commit -m "fix: xxx修复 (#000)"
 | `wip`      | 🚧    | 开发中                                                |
 | `revert`   | ⏪    | 恢复先前的提交                                        |
 
-### 默认主题配置
 
-
----
-home: true
-heroText: Hero 标题
-tagline: Hero 副标题
-actionText: 快速上手 →
-actionLink: /zh/guide/
-features:
-  - title: 简洁至上
-    details: 以 Markdown 为中心的项目结构，以最少的配置帮助你专注于写作。
-  - title: Vue驱动
-    details: 享受 Vue + webpack 的开发体验，在 Markdown 中使用 Vue 组件，同时可以使用 Vue 来开发自定义主题。
-  - title: 高性能
-    details: VuePress 为每个页面预渲染生成静态的 HTML，同时在页面被加载的时候，将作为 SPA 运行。
-footer: MIT Licensed | Copyright © 2020 flyeagleyuan
----
