@@ -1,9 +1,12 @@
 const chalk = require("chalk");
+const path  = require('path')
 const msgPath = process.env.HUSKY_GIT_PARAMS;
+
 const msg = require("fs")
-  .readFileSync(msgPath, "utf-8")
+  .readFileSync(path.join(__dirname, '..', msgPath), "utf-8")
   .trim();
-console.log(msg);
+  
+//提交信息格式校验规则
 const commitReg = /^(revert: )?(feat|fix|docs|style|ui|refactor|perf|test|build|ci|chore|types|wip)(\(.+\))?: .{1,50}/;
 
 if (!commitReg.test(msg)) {
