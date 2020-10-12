@@ -12,7 +12,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "node ./commit.js"
+      "commit-msg": "node ./commit.js"
     }
   },
   "lint-staged": {
