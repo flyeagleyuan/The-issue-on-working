@@ -7,6 +7,9 @@ module.exports = {
     lastUpdated: "Last Updated",
   },
   markdown:{
-    lineNumber: true
-  }
+    lineNumbers: true
+  },
+  plugins: [
+    'vuepress-plugin-mermaidjs'
+  ]
 };
