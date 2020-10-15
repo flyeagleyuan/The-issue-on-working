@@ -250,6 +250,103 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
 }
 ```
 
-如上图高亮部分。
+如上第 25,27,51 行高亮部分。
+
+### 2.3 依赖的 Watcher
+
+通过上面 2 个章节，我们明白了什么是依赖、何时收集依赖以及收集的依赖放在何处。接下来我们看看收集的这个依赖到底是谁
+
+答案就是`Watcher`类，数据变化后，我们不是直接通知依赖更新，而是通知依赖对应的`Watcher`实例，由`Watcher`实例通知真正的视图去更新。
+
+`Watcher`类的实例如下
+
+```js
+// 源码位置：src/core/observer/watcher.js
+
+export default class Watcher {
+  vm: Component;
+  expression: string;
+  cb: Function;
+  id: number;
+  deep: boolean;
+  user: boolean;
+  lazy: boolean;
+  sync: boolean;
+  dirty: boolean;
+  active: boolean;
+  deps: Array<Dep>;
+  newDeps: Array<Dep>;
+  depIds: SimpleSet;
+  newDepIds: SimpleSet;
+  before: ?Function;
+  getter: Function;
+  value: any;
+
+  constructor(vm: Component, expOrFn: string | Function, cb: Function, options?: ?Object, isRenderWatcher?: boolean) {
+    this.vm = vm;
+
+    this.cb = cb;
+    this.expression = process.env.NODE_ENV !== 'production' ? expOrFn.toString() : '';
+    // parse expression for getter
+    if (typeof expOrFn === 'function') {
+      this.getter = expOrFn;
+    } else {
+      this.getter = parsePath(expOrFn);
+      if (!this.getter) {
+        this.getter = noop;
+        process.env.NODE_ENV !== 'production' &&
+          warn(
+            `Failed watching path: "${expOrFn}" ` +
+              'Watcher only accepts simple dot-delimited paths. ' +
+              'For full control, use a function instead.',
+            vm,
+          );
+      }
+    }
+  }
+
+  /**
+   * Evaluate the getter, and re-collect dependencies.
+   */
+  get() {
+    pushTarget(this);
+    let value;
+    const vm = this.vm;
+    try {
+      value = this.getter.call(vm, vm);
+    } catch (e) {
+      if (this.user) {
+        handleError(e, vm, `getter for watcher "${this.expression}"`);
+      } else {
+        throw e;
+      }
+    } finally {
+      // "touch" every property so they are all tracked as
+      // dependencies for deep watching
+      if (this.deep) {
+        traverse(value);
+      }
+      popTarget();
+      this.cleanupDeps();
+    }
+    return value;
+  }
+
+  /**
+   * Subscriber interface.
+   * Will be called when a dependency changes.
+   */
+  update() {
+    /* istanbul ignore else */
+    if (this.lazy) {
+      this.dirty = true;
+    } else if (this.sync) {
+      this.run();
+    } else {
+      queueWatcher(this);
+    }
+  }
+}
+```
 
 ## Array 的侦测变化
