@@ -351,7 +351,7 @@ export default class Watcher {
 
 `watcher`的实现逻辑是：
 1、在`Watcher`中，先执行构造函数，构造函数中调用`this.get()`方法。
-2、在`get()`方法中，首先通过`pushTarget`方法把自身实例赋给全局唯一对象`Dep`
+2、在`get()`方法中，首先通过`pushTarget`方法把自身实例赋给全局唯一对象`Dep`,然后调用`this.getter.call(vm, vm)`获取被依赖数据(触发数据上的`getter`),在`getter`上回调用`dep.depend()`收集依赖，然后释放掉`Dep.target`
 
 ```mermaid
 graph TD
