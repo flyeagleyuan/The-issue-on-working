@@ -349,4 +349,13 @@ export default class Watcher {
 }
 ```
 
+`watcher`的实现逻辑是：
+1、在`Watcher`中，先执行构造函数，构造函数中调用`this.get()`方法。
+2、在`get()`方法中，首先通过`pushTarget`方法把自身实例赋给全局唯一对象`Dep`
+
+```mermaid
+graph TD
+A(Watcher)-->B(this.get)
+```
+
 ## Array 的侦测变化
