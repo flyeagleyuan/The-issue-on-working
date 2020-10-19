@@ -3,6 +3,7 @@ module.exports = {
   description: "使用了这么长时间得vue，特别想自己写一份源码得分析，便于自己理解，也输出一些东西",
   themeConfig: {
     displayAllHeaders: true,
+    sidebarDepth: 2,
     sidebar: ["/", ["/changeObserve/","为什么写这篇文章"]],
     lastUpdated: "Last Updated",
   },

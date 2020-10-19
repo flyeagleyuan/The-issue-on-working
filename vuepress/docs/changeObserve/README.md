@@ -252,7 +252,7 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
 
 如上第 25,27,51 行高亮部分。
 
-### 2.3 依赖的 Watcher
+### 3 依赖的 Watcher
 
 通过上面 2 个章节，我们明白了什么是依赖、何时收集依赖以及收集的依赖放在何处。接下来我们看看收集的这个依赖到底是谁
 
@@ -352,6 +352,9 @@ export default class Watcher {
 `watcher`的实现逻辑是：
 1、在`Watcher`中，先执行构造函数，构造函数中调用`this.get()`方法。
 2、在`get()`方法中，首先通过`pushTarget`方法把自身实例赋给全局唯一对象`Dep`,然后调用`this.getter.call(vm, vm)`获取被依赖数据(触发数据上的`getter`),在`getter`上回调用`dep.depend()`收集依赖，然后释放掉`Dep.target`
+3、当数据变化时，会触发数据的`seeter`，在`setter`函数中会触发`dep.notify()`方法，在`dep.notify`中，遍历所有依赖（即 watcher 实例)，执行`Watcher`的`update()`方法，在`update()`中调用回调函数，更新视图。
+
+具体见下图
 
 ```mermaid
 graph TD
