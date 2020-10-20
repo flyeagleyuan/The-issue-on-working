@@ -252,7 +252,7 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
 
 如上第 25,27,51 行高亮部分。
 
-### 3 依赖的 Watcher
+### 3.依赖的 Watcher
 
 通过上面 2 个章节，我们明白了什么是依赖、何时收集依赖以及收集的依赖放在何处。接下来我们看看收集的这个依赖到底是谁
 
@@ -358,7 +358,8 @@ export default class Watcher {
 
 ```mermaid
 graph TD
-A(Watcher)-->B(this.get())
+A[Watcher] --> B[this.get]
+B  --> c{target}
 ```
 
 ## Array 的侦测变化
