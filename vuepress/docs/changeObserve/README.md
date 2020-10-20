@@ -358,7 +358,7 @@ export default class Watcher {
 
 ```mermaid
 graph TD
-A(Watcher)-->B(this.get)
+A(Watcher)-->B(this.get())
 ```
 
 ## Array 的侦测变化
