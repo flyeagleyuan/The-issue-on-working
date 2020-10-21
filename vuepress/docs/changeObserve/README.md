@@ -359,7 +359,24 @@ export default class Watcher {
 ```mermaid
 graph TD
 A[Watcher] --> B[this.get]
-B  --> c{target}
+B  --> C{Dep.target}
+A -->C
+D[数据] --> B
+D --> E[setter]
 ```
+
+### 4.存在的问题
+
+这个方法只能观测`object`声明过的`data`中的值，当我们向`object`添加一个新的`key/value`或者删除一对已有的`key/value`时，这个方法无法观测。
+
+解决方法：`vue`增加了两个全局API：`Vue.set`和`Vue.delete`。这两个API的原理稍后我们再看。
+
+### 5.总结
+
+首先，我们利用`Object.defineProperty`实现了对`object`数据的可观测，封装了`Observer`类，使`object`中的所有属性都转化为`getter/setter`的形式来侦测变化。
+
+接着，在`getter`中收集依赖，在`setter`通知依赖更新。运用`Dep`存储收集的依赖
+
+最后，为每一个依赖创建一个`Watcher`实例，当数据变化时，通知`Watcher`，由实例做真实的更新操作
 
 ## Array 的侦测变化
