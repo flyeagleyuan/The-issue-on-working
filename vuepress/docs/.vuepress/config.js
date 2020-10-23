@@ -4,7 +4,17 @@ module.exports = {
   themeConfig: {
     displayAllHeaders: true,
     sidebarDepth: 2,
-    sidebar: ["/", ["/changeObserve/","为什么写这篇文章"]],
+    sidebar: [
+      {title:'前言',path:'/',children:['/']},
+      {
+        title:'数据变化',
+        path:'/changeObserve',
+        // sidebarDepth: 2,
+        children:['changeObserve/','changeObserve/objectObserve','changeObserve/arrayObserve']
+      },
+      {title:'前言',path:'/',children:['/']},
+      {title:'前言',path:'/',children:['/']}
+    ],
     lastUpdated: "Last Updated",
   },
   markdown:{
