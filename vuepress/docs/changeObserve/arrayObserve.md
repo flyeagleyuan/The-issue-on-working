@@ -59,7 +59,7 @@ const methodsToPatch = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 're
  * Intercept mutating methods and emit events
  */
 methodsToPatch.forEach(function (method) {
-  // cache original method
+  // 把数组原来的方法缓存
   const original = arrayProto[method];
   def(arrayMethods, method, function mutator(...args) {
     const result = original.apply(this, args);
@@ -91,3 +91,72 @@ export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
   });
 }
 ```
+
+上述代码主要进行的内容有： 首先继承`Array`原型的空对象`arrayMethods`，接下来在`arrayMethods`上使用`def`(即`Object.defineProperty`方法)，将数组的 7 个方法遍历封装。这样我们使用`Array`的方法时，实际使用的就是`arrayMethods`的方法`mutator`,在`mutator`中我们发送了`Array`的变化通知，然后返回了缓存的`Array`的方法`original`.
+
+### 3.3 使用数组拦截器
+
+如何使用拦截器？要把它挂载到数组实例与`Array.prototype`之间，如何挂载呢？只需要将数据的`__proto__`属性设置为拦截器`arrayMethids`即可，源码如下
+
+```js{13-20}
+const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
+
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor(value: any) {
+    this.value = value;
+    this.dep = new Dep();
+    this.vmCount = 0;
+    def(value, '__ob__', this);
+    if (Array.isArray(value)) {
+      if (hasProto) {
+        protoAugment(value, arrayMethods);
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys);
+      }
+      this.observeArray(value);
+    } else {
+      this.walk(value);
+    }
+  }
+
+  /**
+   * Walk through all properties and convert them into
+   * getter/setters. This method should only be called when
+   * value type is Object.
+   */
+  walk(obj: Object) {
+    const keys = Object.keys(obj);
+    for (let i = 0; i < keys.length; i++) {
+      defineReactive(obj, keys[i]);
+    }
+  }
+
+  /**
+   * Observe a list of Array items.
+   */
+  observeArray(items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i]);
+    }
+  }
+}
+
+function protoAugment(target, src: Object) {
+  /* eslint-disable no-proto */
+  target.__proto__ = src;
+  /* eslint-enable no-proto */
+}
+
+function copyAugment(target: Object, src: Object, keys: Array<string>) {
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
+    def(target, key, src[key]);
+  }
+}
+```
+
+如上代码，即为之前分析的`Observer`类，在高亮位置，先判断`value`为`Array`时再判断浏览器是否支持，支持则调用`protoAugment`，把`value.__proto__=arrayMethods`，不支持则调用`copyAugment`函数把拦截器中重写的7个方法加到`value`上。这样我们就能监测数组的数据变化了。
