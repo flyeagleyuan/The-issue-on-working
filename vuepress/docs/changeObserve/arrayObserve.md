@@ -159,4 +159,153 @@ function copyAugment(target: Object, src: Object, keys: Array<string>) {
 }
 ```
 
-如上代码，即为之前分析的`Observer`类，在高亮位置，先判断`value`为`Array`时再判断浏览器是否支持，支持则调用`protoAugment`，把`value.__proto__=arrayMethods`，不支持则调用`copyAugment`函数把拦截器中重写的7个方法加到`value`上。这样我们就能监测数组的数据变化了。
+如上代码，即为之前分析的`Observer`类，在高亮位置，先判断`value`为`Array`时再判断浏览器是否支持，支持则调用`protoAugment`，把`value.__proto__=arrayMethods`，不支持则调用`copyAugment`函数把拦截器中重写的 7 个方法加到`value`上。这样我们就能监测数组的数据变化了。
+
+## 4.依赖收集分析
+
+### 4.1 数组依赖收集的不同
+
+上面我们讲到数组的依赖收集依然在`getter`中，具体如何收集呢？我们看源码
+
+```js{19,24-28,31-51,73}
+//源码位置：/src/core/observer/index.js
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor(value: any) {
+    this.value = value;
+    this.dep = new Dep();
+    this.vmCount = 0;
+    def(value, '__ob__', this);
+    if (Array.isArray(value)) {
+      if (hasProto) {
+        protoAugment(value, arrayMethods);
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys);
+      }
+      this.observeArray(value);
+    } else {
+      this.walk(value);
+    }
+  }
+  observeArray(items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i]);
+    }
+  }
+}
+
+export function observe(value: any, asRootData: ?boolean): Observer | void {
+  if (!isObject(value) || value instanceof VNode) {
+    return;
+  }
+  let ob: Observer | void;
+  if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
+    ob = value.__ob__;
+  } else if (
+    shouldObserve &&
+    !isServerRendering() &&
+    (Array.isArray(value) || isPlainObject(value)) &&
+    Object.isExtensible(value) &&
+    !value._isVue
+  ) {
+    ob = new Observer(value);
+  }
+  if (asRootData && ob) {
+    ob.vmCount++;
+  }
+  return ob;
+}
+
+export function defineReactive(obj: Object, key: string, val: any, customSetter?: ?Function, shallow?: boolean) {
+  const dep = new Dep();
+
+  const property = Object.getOwnPropertyDescriptor(obj, key);
+  if (property && property.configurable === false) {
+    return;
+  }
+
+  // cater for pre-defined getter/setters
+  const getter = property && property.get;
+  const setter = property && property.set;
+  if ((!getter || setter) && arguments.length === 2) {
+    val = obj[key];
+  }
+
+  let childOb = !shallow && observe(val);
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get: function reactiveGetter() {
+      const value = getter ? getter.call(obj) : val;
+      if (Dep.target) {
+        dep.depend();
+        if (childOb) {
+          childOb.dep.depend();
+          if (Array.isArray(value)) {
+            dependArray(value);
+          }
+        }
+      }
+      return value;
+    },
+    set: function reactiveSetter(newVal) {
+      const value = getter ? getter.call(obj) : val;
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return;
+      }
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== 'production' && customSetter) {
+        customSetter();
+      }
+      // #7981: for accessor properties without setter
+      if (getter && !setter) return;
+      if (setter) {
+        setter.call(obj, newVal);
+      } else {
+        val = newVal;
+      }
+      childOb = !shallow && observe(newVal);
+      dep.notify();
+    },
+  });
+}
+```
+
+如上代码在 31 行调用数组的收集方法`observeArray`，之后循环调用`observe`函数。在`observe`中先判断当前的数据是否有`__ob__`属性（可以判断是否已经是响应式），如果有此属性则返回`Observer`实例，没有则创建新的实例`new Observer(value)`。
+
+在`defineReactive`函数中，第 73 行先获取`Observer`的实例`childOb`，然后在`getter`中第 82 行调用`Observer`实例上的依赖管理器，收集依赖。
+
+### 4.2 通知更新
+
+只需要在拦截器中，通知即可如下源码
+
+```js{19}
+methodsToPatch.forEach(function (method) {
+  // cache original method
+  const original = arrayProto[method];
+  def(arrayMethods, method, function mutator(...args) {
+    const result = original.apply(this, args);
+    const ob = this.__ob__;
+    let inserted;
+    switch (method) {
+      case 'push':
+      case 'unshift':
+        inserted = args;
+        break;
+      case 'splice':
+        inserted = args.slice(2);
+        break;
+    }
+    if (inserted) ob.observeArray(inserted);
+    // notify change
+    ob.dep.notify();
+    return result;
+  });
+});
+```
+
+在上面代码中第 19 行通知。分析：因为拦截器是挂载在数组原型`Array.prototype`上，所以第6行的`this`即为`Observer`类的实例，`this.__ob__`上可以找到依赖管理器`dep.notify()`方法，就可以通知依赖
