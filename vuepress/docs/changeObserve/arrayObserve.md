@@ -167,7 +167,7 @@ function copyAugment(target: Object, src: Object, keys: Array<string>) {
 
 上面我们讲到数组的依赖收集依然在`getter`中，具体如何收集呢？我们看源码
 
-```js{19,24-28,31-51,73}
+```js{9,31-51,67,78}
 //源码位置：/src/core/observer/index.js
 export class Observer {
   value: any;
@@ -185,7 +185,7 @@ export class Observer {
       } else {
         copyAugment(value, arrayMethods, arrayKeys);
       }
-      this.observeArray(value);
+      this.observeArray(value); //深度侦测
     } else {
       this.walk(value);
     }
@@ -275,13 +275,14 @@ export function defineReactive(obj: Object, key: string, val: any, customSetter?
 }
 ```
 
-如上代码在 31 行调用数组的收集方法`observeArray`，之后循环调用`observe`函数。在`observe`中先判断当前的数据是否有`__ob__`属性（可以判断是否已经是响应式），如果有此属性则返回`Observer`实例，没有则创建新的实例`new Observer(value)`。
-
-在`defineReactive`函数中，第 73 行先获取`Observer`的实例`childOb`，然后在`getter`中第 82 行调用`Observer`实例上的依赖管理器，收集依赖。
+1. 如上代码,在 9 行实例化一个收集器,此实例用来收集数组依赖.
+2. 在`defineReactive`函数中，第 67 行先调用函数`observe`返回`Observer`的实例.
+3. 在`observe`中,先判断当前的数据是否有`__ob__`属性（可以判断是否已经是响应式），如果有此属性则返回`Observer`实例，没有则创建新的实例`new Observer(value)`.
+4. 在`defineReactive`函数中，`getter`函数的第 78 行调用`Observer`实例上的依赖管理器，收集依赖。
 
 ### 4.2 通知更新
 
-只需要在拦截器中，通知即可如下源码
+只需要在拦截器中，通知即可,如下源码
 
 ```js{19}
 methodsToPatch.forEach(function (method) {
@@ -308,4 +309,61 @@ methodsToPatch.forEach(function (method) {
 });
 ```
 
-在上面代码中第 19 行通知。分析：因为拦截器是挂载在数组原型`Array.prototype`上，所以第6行的`this`即为`Observer`类的实例，`this.__ob__`上可以找到依赖管理器`dep.notify()`方法，就可以通知依赖
+在上面代码中第 19 行通知。分析：因为拦截器是挂载在数组原型`Array.prototype`上，所以第 6 行的`this`即为`Observer`类的实例，`this.__ob__`上可以找到依赖管理器`dep.notify()`方法，就可以通知依赖
+
+## 5. 如何深度侦测
+
+因为数组有可能深层嵌套,所以我们必须考虑子数据的数据变化侦测.实现代码如下
+
+```js{18}
+//源码位置：/src/core/observer/index.js
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor(value: any) {
+    this.value = value;
+    this.dep = new Dep();
+    this.vmCount = 0;
+    def(value, '__ob__', this);
+    if (Array.isArray(value)) {
+      if (hasProto) {
+        protoAugment(value, arrayMethods);
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys);
+      }
+      this.observeArray(value); //深度侦测
+    } else {
+      this.walk(value);
+    }
+  }
+  observeArray(items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i]);
+    }
+  }
+}
+```
+
+如上代码,第 18 行,当`value`为数组时调用`observeArray`函数,在此函数中遍历数组,通过`observe`函数将每一个子元素转化为可侦测的响应式数据.
+
+### 6.缺点
+
+因为我们数组是通过拦截器实现的变化可侦测,故下面这种情况拦截器拦截不到
+
+```js
+let arr = [1, 2, , 3];
+arr[0] = 4; //通过下标修改数组中的数据
+arr.length = 0; //通过修改数组长度清空数组
+```
+
+这 2 种情况不可监测,`Vue`用两个全局 API 解决这个问题`Vue.set`和`Vue.delete`,这两个 API 我们在后面的章节会讲解.
+
+## 7.综述
+
+1. 相对于`Object`,数组被访问时和`object`一样.
+2. 但是被修改却不知道,于是我们创建了拦截器,使变化可侦测.同时针对数组可能存在的子数据我们进行了深度侦测.
+3. 针对通过下标更改和数组长度修改,不可被侦测,我们通过全局 API`Vue.set`和`Vue.delete`解决.
+
+至此所有`Array`的变化侦测分析完成
