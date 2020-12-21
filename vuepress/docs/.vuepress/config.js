@@ -18,7 +18,7 @@ module.exports = {
         children: ['virtualDom/', 'virtualDom/DOMDiff', 'virtualDom/updateSubNode', 'virtualDom/improve'],
       },
       { title: '模板编译', path: '/template', children: ['template/'] },
-      { title: '生命周期', path: '/liftCycle', children: ['liftCycle/'] },
+      { title: '生命周期', path: '/lifeCycle', children: ['lifeCycle/'] },
       { title: '实例方法', path: '/instanceMethod', children: ['instanceMethod/'] },
       { title: '全局API', path: '/globalAPI', children: ['globalAPI/'] },
     ],
