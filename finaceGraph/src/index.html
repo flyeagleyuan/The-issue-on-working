@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Title</title>
+    <style>
+      :root {
+        font-size: 24px;
+      }
+      body {
+        font-size: 0.24rem;
+      }
+
+      ul {
+        margin: 0 0 20px;
+        overflow: hidden;
+      }
+
+      li {
+        list-style: none;
+        float: left;
+        width: 33.33%;
+      }
+
+      h3 {
+        text-align: center;
+        margin: 0 0 10px;
+      }
+    </style>
+    <script>
+      function changeView() {
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+
+        if (width < 320) {
+          let screen = window.screen;
+          width = screen[screen.width > screen.height ? 'height' : 'width'];
+          if (width < 320) width = 320;
+        }
+
+        if (width > 750) width = 750;
+
+        document.getElementsByTagName('html')[0].style.setProperty('font-size', (100 * width) / 750 + 'px');
+        document.getElementsByTagName('body')[0].style.setProperty('visibility', 'visible');
+
+        if (!width) {
+          setTimeout(changeView, 20);
+        }
+      }
+
+      window.onload = function() {
+        changeView();
+      };
+    </script>
+  </head>
+  <body>
+    <h3>融资图谱</h3>
+    <ul>
+      <li><a href="./graph.html?code=2010000857&type=co&user=1&token=000000">融资图谱页面</a></li>
+    </ul>
+  </body>
+</html>
